@@ -12,8 +12,8 @@
           <div class="title">
               <img src="../../assets/img/cxdlz.png" alt="">
           </div>
-          <!-- 表单 -->
-          <el-form :model='loginForm' :rules="loginRules"  style="margin-top:20px">
+          <!-- 表单  给el-form一个ref属性-->
+          <el-form :model='loginForm' :rules="loginRules" ref="loginForm" style="margin-top:20px">
               <!-- 表单容器 绑定model属性  绑定rules属性（表单验证规则） -->
               <el-form-item prop="mobile">
               <!--表单域  -->
@@ -33,7 +33,7 @@
            </el-form-item>
            <!-- 按钮 -->
          <el-form-item>
-           <el-button style="width:100%" type="primary">登录</el-button>
+           <el-button @click="login" style="width:100%" type="primary">登录</el-button>
          </el-form-item>
           </el-form>
       </el-card>
@@ -51,10 +51,39 @@ export default {
         code: '', // 验证码
         checked: false // 是否同意用户协议
       },
-      //   定义表单的验证规则必写
+      //   定义表单的验证规则必写 三个字段
       loginRules: {
-
+        //   required ：true表示该字段必填
+        mobile: [{ required: true, message: '您的手机号不能为空' }, {
+          pattern: /^1[3-9]\d{9}$/, message: '您的手机号格式不正确' // 正则表达式
+        }], // 手机号
+        code: [{ required: true, message: '您的验证码不能为空' }, {
+          pattern: /^\d{6}$/, message: '验证码应该是6位数字'// 6位验证码
+        }], // 验证码
+        // checked进行自定义校验 因为required不能校验true和false
+        // callback是一个回调函数 不论成功与否都会执行
+        // 成功执行callback  失败执行 callback（new Error（‘错误信息’））
+        // 根据value的布尔值判断 效验是否成功 true为成功 false为失败
+        checked: [{
+          validator: function (rule, value, callback) {
+            value ? callback() : callback(new Error('您必须同意勾选我们的条款'))
+          }
+        }]// 是否同意用户协议
       }
+    }
+  },
+  methods: {
+    // 定义点击事件
+    login () {
+      // this.$refs.loginForm获取的就是el-form的对象实例
+    // 第一种 回调函数 isOK，fields（没有效验通过的字段）
+    //   this.$refs.loginForm.validate()
+    // 第二种 promise形式
+      this.$refs.loginForm.validate().then(() => {
+        console.log('登陆成功')
+      }).catch((error) => {
+        console.log(error)
+      })
     }
   }
 }
