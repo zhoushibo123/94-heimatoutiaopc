@@ -13,23 +13,23 @@
               <img src="../../assets/img/cxdlz.png" alt="">
           </div>
           <!-- 表单 -->
-          <el-form style="margin-top:20px">
-              <!-- 表单容器 -->
-              <el-form-item>
+          <el-form :model='loginForm' :rules="loginRules"  style="margin-top:20px">
+              <!-- 表单容器 绑定model属性  绑定rules属性（表单验证规则） -->
+              <el-form-item prop="mobile">
               <!--表单域  -->
-              <el-input placeholder="请输入手机号">
+              <el-input v-model="loginForm.mobile" placeholder="请输入手机号">
               </el-input>
               </el-form-item>
-               <!-- 验证码 -->
-            <el-form-item>
-                <el-input style="width:60%" placeholder="请输入验证码"></el-input>
+               <!-- 验证码 绑定model属性  绑定rules属性（表单验证规则） -->
+            <el-form-item prop="code">
+                <el-input  v-model="loginForm.code" style="width:60%" placeholder="请输入验证码"></el-input>
                  <!-- 放置一个按钮 -->
                 <el-button style="float:right" plain>发送验证码</el-button>
             </el-form-item>
-            <!-- 表单域 -->
-            <el-form-item>
+            <!-- 表单域    绑定model属性  绑定rules属性（表单验证规则）-->
+            <el-form-item prop="checked">
            <!-- 是否同意被人家坑 -->
-           <el-checkbox>我已阅读同意用户协议和隐私条款</el-checkbox>
+           <el-checkbox  v-model="loginForm.checked">我已阅读同意用户协议和隐私条款</el-checkbox>
            </el-form-item>
            <!-- 按钮 -->
          <el-form-item>
@@ -43,7 +43,20 @@
 
 <script>
 export default {
+  data () {
+    return {
+      // 登陆表单的数据
+      loginForm: {
+        mobile: '', // 手机号
+        code: '', // 验证码
+        checked: false // 是否同意用户协议
+      },
+      //   定义表单的验证规则必写
+      loginRules: {
 
+      }
+    }
+  }
 }
 </script>
 
@@ -59,9 +72,8 @@ export default {
     .login-card{
         width: 440px;
        height: 380px;
-         filter:alpha(opacity=60);
-            /* CSS3 standard */
-        opacity:0.8;
+    background:transparent;
+    box-shadow:2px 4px 6px 2px rgba(0,0,0,0.1);
         .title{
             text-align: center;
             img{
