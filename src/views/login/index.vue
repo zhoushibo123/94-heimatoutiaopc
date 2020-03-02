@@ -77,12 +77,32 @@ export default {
     login () {
       // this.$refs.loginForm获取的就是el-form的对象实例
     // 第一种 回调函数 isOK，fields（没有效验通过的字段）
-    //   this.$refs.loginForm.validate()
+    //   this.$refs.loginForm.validate(function(isOK){
+      // if(isOK){console.log('通过')}else{console.log('没通过')}
+    // })
     // 第二种 promise形式
       this.$refs.loginForm.validate().then(() => {
-        console.log('登陆成功')
-      }).catch((error) => {
-        console.log(error)
+        //   通过校验后调接口调登录接口 看看手机号是否正确
+        // console.log('登陆成功')
+        this.$axios({
+          url: '/authorizations',
+          //   data: { ...this.loginForm, checked: null },
+          data: this.loginForm, // body请求体参数
+          method: 'post'
+
+        }).then(result => {
+        //   console.log(result.data.data.token)
+        // 将token存放在本地 token是钥匙 每次发ajax都要携带钥匙
+          window.localStorage.setItem('user-token', result.data.data.token)
+          // 跳转到主页编程是导航
+          this.$router.push('/home') // push和router-link类似 to属性可以直接是字符串也可以是对象
+        }).catch(() => {
+          // 提示信息
+        //   第一种用法
+        //   this.$message({ message: '用户名或验证码错误', type: 'error' })
+        // 第二种
+          this.$message.error('手机号或者验证码错误')
+        })
       })
     }
   }
