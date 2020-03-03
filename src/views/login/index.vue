@@ -98,7 +98,7 @@ export default {
           this.$router.push('/home') // push和router-link类似 to属性可以直接是字符串也可以是对象
         }).catch(() => {
           // 提示信息
-        //   第一种用法
+        //   第一种用法   $message是注册在Vue原型上的所以可以使用
         //   this.$message({ message: '用户名或验证码错误', type: 'error' })
         // 第二种
           this.$message.error('手机号或者验证码错误')
