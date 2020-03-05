@@ -93,7 +93,7 @@ export default {
         }).then(result => {
         //   console.log(result.data.data.token)
         // 将token存放在本地 token是钥匙 每次发ajax都要携带钥匙
-          window.localStorage.setItem('user-token', result.data.data.token)
+          window.localStorage.setItem('user-token', result.data.token)
           // 跳转到主页编程是导航
           this.$router.push('/home') // push和router-link类似 to属性可以直接是字符串也可以是对象
         }).catch(() => {

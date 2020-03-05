@@ -55,16 +55,16 @@ export default {
   },
   //   Vue实例化后立即触发钩子函数
   created () {
-    const token = localStorage.getItem('user-token') // 从本地取出钥匙
+    // const token = localStorage.getItem('user-token') // 从本地取出钥匙
     // 获取个人信息
     this.$axios({
-      url: '/user/profile', // 获取个人信息接口
-      headers: {
-        Authorization: `Bearer ${token}` // 格式要求 Bearer +token
-      }// 请求头参数 headers放置请求头参数
+      url: '/user/profile' // 获取个人信息接口
+      // headers: {
+      //   Authorization: `Bearer ${token}` // 格式要求 Bearer +token
+      // }// 请求头参数 headers放置请求头参数
     }).then(result => {
       // 加载成功了将数据赋值给userInfo
-      this.userInfo = result.data.data
+      this.userInfo = result.data
     })
   }
 }
