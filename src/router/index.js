@@ -21,7 +21,12 @@ const routes = [{
     //   path:'/home/comment', // 完整地址 评论列表的地址
     path: 'comment', // 简写地址
     component: () => import('@/views/comment')// 按需加载的方式
-  }]
+  }, {
+    path: '/home/material', // 素材管理二级路由
+    component: () => import('@/views/material')
+  }
+
+  ]
 }, {
   path: '/login',
   component: Login,

@@ -3,9 +3,22 @@
 // 配置拦截器
 import axios from 'axios'
 import router from '@/router'// 路由实例对象
+import JSONBig from 'json-bigint'// 引入处理大数字的第三方包
 // 对拦截器的其他操作
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'// 配置共公的请求地址
-
+axios.defaults.transformResponse = [function (data) {
+  /* 对axios的返回数据进行自定义处理 用json-bigint代替原来的json
+   transformResponse中要返回处理的结果
+   transformResponse是所有请求字符串 转化成 对象的入口 在这个位置 如果处理了相当于多有的接口都处理了大数字
+  */
+  // 在这里主要处理id超过大数字的时候 转化 不正确的问题 JSONbing.parse是第三方的包
+  // 只要知道他可以帮我们结果转化问题
+  // const result=JSON.parse（data）
+  // return result
+  // 用json-bigint来转化代替默认
+  // 在这里需要判断下一下data是不是空如果是空就不能转化了
+  return data ? JSONBig.parse(data) : {}
+}]
 // 请求拦截器的开发
 axios.interceptors.request.use(function (config) {
 // 成功时执行第一个参数   会有一个config就是所有的axios的请求信息

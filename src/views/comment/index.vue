@@ -1,5 +1,6 @@
 <template>
-  <el-card>
+<!-- 给el-card分页效果做一个懒加载效果 -->
+  <el-card v-loading="loading">
     <!-- 放置一个封装好的面包屑组件 -->
     <bread-crumb slot="header">
       <!-- slot="header"是el-card的具名插槽 使用他的样式 -->
@@ -25,6 +26,24 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 放置分页组件 -->
+    <el-row  style="height:80px" type="flex" align="middle" justify="center">
+      <!--
+        分页组件需要  动态的数据  在data中定义变量
+        total 当前的总数
+        current-page 当前的页码
+        page-size 每页多少条
+        监听current-change事件 就是点击对应的页码发生改变事件 elementui内置事件
+       -->
+       <el-pagination background layout="prev,pager,next"
+       :current-page="page.currentPage"
+       :total="page.total"
+       :page-size="page.pageSize"
+       @current-change="changePage"
+       >
+
+       </el-pagination>
+    </el-row>
   </el-card>
 </template>
 
@@ -32,15 +51,34 @@
 export default {
   data () {
     return {
-      list: []
+      // 分页参数单独放置一个对象
+      page: {
+        total: 0, // 总数默认是0
+        currentPage: 1, // 默认页显示第一页
+        pageSize: 10// 默认当前页显示10条数据
+      },
+      list: [],
+      loading: false// 控制loading遮罩层显示/隐藏
     }
   },
   methods: {
+    // 页码改变事件
+    changePage (newPage) {
+      // newPage是最新的页码
+      // 把最新页码设置给page当前的页码 进行赋值
+      this.page.currentPage = newPage
+      // 重新拉取数据
+      this.getComment()
+    },
     getComment () {
+      this.loading = true // 打开遮罩层
       this.$axios({
+        // 接口如果不传分页数据默认就是第一页数据
         url: '/articles', // 请求地址
         params: {
-          response_type: 'comment' // 此参数用来控制获取数据类型
+          response_type: 'comment', // 此参数用来控制获取数据类型
+          page: this.page.currentPage, // 此参数用来 查找对应页码
+          per_page: this.page.pageSize// 用来查找10条数据
         }
         /* query参数应该在哪个位置传参axios？
         parmas传get参数也就是query参数
@@ -50,6 +88,9 @@ export default {
         console.log(result)
         // 将返回结果中的数组复制个list空数组
         this.list = result.data.results
+        // 将返回结果中的总数赋值给total
+        this.page.total = result.data.total_count
+        this.loading = false // 请求完毕关闭遮罩层
       })
     },
     formatterBool (row, column, cellValue, index) {
@@ -73,7 +114,11 @@ export default {
           method: 'put', // 方式
           // query参数
           params: {
-            article_id: row.id// 要求参数的文章id
+            // // 为什么评论会失败 就是因为 原来 给你传了 9152 你回传了 9200
+            // 所以我们用大数字包 保证 9152不被转化 就可以使用原来的功能
+            //  // 前端传字符串到后端 只要和原数字一致  后端会自动将字符串转成大数字
+            // 只需要保证 id 和传过来的id一致就行
+            article_id: row.id.toString()// 要求参数的文章id  将大数字BIGnumber转成字符串
           },
           data: {
             // body参数

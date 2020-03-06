@@ -4,7 +4,7 @@
       <!-- 加：是因为span后边跟的是number 不加：是字符串 -->
       <el-col :span="12" class="left">
           <i class="el-icon-s-fold"></i>
-          <span>抽象带篮子工作室</span>
+          <span>不忘初心继续前进</span>
       </el-col>
       <!-- 右侧 -->
       <el-col :span="12" class="right">
