@@ -1,9 +1,10 @@
 <template>
 <!-- 外层容器 现在最外层放置一个大容器因为小容器只能放在大容器里 -->
  <el-container>
-<el-aside style="width:230px;background:#2e2f32">
+<!-- <el-aside :style="{width: collapse ? '230px':'64px'}" style="background:#2e2f32"> -->
+ <el-aside :style="{width: collapse ? '64px' : '230px'}"  style="transition:all 0.5s; background:#2e2f32">
   <!-- 侧边栏容器 -->
- <layout-aside></layout-aside>
+ <layout-aside :collapse="collapse"></layout-aside>
 </el-aside>
 <el-container>
 <!-- 右侧容器 右侧在嵌套一个el-container-->
@@ -25,7 +26,20 @@
 <script>
 // import LayouAside from '@/components/home/layout-aside'
 // import LayouHeader from '@/components/home/layout-header'
+import eventBus from '@/utils/eventBus' // 公共领域监听
 export default {
+  data () {
+    return {
+      collapse: false// 展开状态
+    }
+  },
+  created () {
+    // 切换了折叠的状态
+    eventBus.$on('changeCollapse', () => {
+      // 此时折叠状态一定变了 一定跟当前状态相反
+      this.collapse = !this.collapse // 只取反就和头部的组件的状态同步了
+    })
+  }
   // components: {
   //   'layout-aside': LayouAside,
   //   'layout-header': LayouHeader

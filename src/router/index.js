@@ -7,6 +7,9 @@ import SecondHome from '@/views/home/second_home'
 Vue.use(VueRouter)
 
 const routes = [{
+  path: '*', // 匹配任何找不到组件的路由
+  component: () => import('@/views/404')
+}, {
   path: '/',
   redirect: '/home'
 },
@@ -24,8 +27,16 @@ const routes = [{
   }, {
     path: '/home/material', // 素材管理二级路由
     component: () => import('@/views/material')
+  }, {
+    path: 'articles',
+    component: () => import('@/views/articles') // 引入组件
+  }, {
+    path: 'publish/:articleID?', // 发布文章 动态路由传参 点击修改后把对应的文章id传过去  加上?有没有id传不传都可以匹配
+    component: () => import('@/views/publish') // 引入组件
+  }, {
+    path: 'account', // 账户地址
+    component: () => import('@/views/account') // 账户组件
   }
-
   ]
 }, {
   path: '/login',

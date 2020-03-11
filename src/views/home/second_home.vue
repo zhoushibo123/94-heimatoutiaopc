@@ -7,11 +7,33 @@
          <img :src="item" alt="">
       </el-carousel-item>
     </el-carousel>
+    <!-- 放置图表组件 -->
+    <div ref="myChart" class="charts"></div>
   </div>
 </template>
 
 <script>
+import ECharts from 'echarts' // 引入图表模块
+// 图表本身使用camcas实现的
 export default {
+  mounted () {
+    // 进行ECharts实例化  init  ECharts内置方法
+    this.myChart = ECharts.init(this.$refs.myChart)// 实例化  得到图表的一个实例化对象
+    // this.myChart就是图表对象
+    this.myChart.setOption({
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        type: 'line'
+      }]
+    })
+  },
   data () {
     return {
       list: ['http://p3.img.cctvpic.com/photoAlbum/page/performance/img/2019/10/29/1572347589578_536.gif',
@@ -32,6 +54,12 @@ background-image: url('https://med.sina.com/files/20200304/jpg/20200304110453680
 img{
   width: 100%;
   height: 100%;
+}
+.charts{
+  width: 600px;
+  height: 400px;
+  // background-color: rosybrown;
+
 }
 }
 </style>

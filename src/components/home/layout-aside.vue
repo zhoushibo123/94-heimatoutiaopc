@@ -2,10 +2,12 @@
   <div class="layout-aside">
       <!-- 头部图片 -->
       <div class="title">
-          <img src="../../assets/img/logo_admin.png" alt="">
+           <!-- 如果img是动态的 你需要把地址转变成变量 -->
+         <!-- 如果是折叠 用小图 如果是展开 用大图 -->
+         <img :src="collapse ? smallImg : bigImg" alt="">
       </div>
       <!-- 导航菜单  直接写router即可开启路由模式  完整写法 :router="true"-->
-      <el-menu router background-color="#323745" text-color="#abafb5">
+      <el-menu :collapse="collapse" router background-color="#323745" text-color="#abafb5">
           <!-- 子菜单 -->
           <!-- 两个没有子菜单的 -->
           <el-menu-item index="/home">
@@ -25,19 +27,19 @@
            <el-menu-item index="/home/material">素材管理</el-menu-item>
           </el-submenu>
            <!-- 二级菜单 -->
-          <el-submenu index='2' >
+          <!-- <el-submenu index='2' >
                <template slot="title">
               <i class="el-icon-video-camera-solid"></i>
               <span >粉丝管理</span>
-                </template>
-              <!-- 匿名插槽是二级菜单  具名插槽是一级菜单 -->
+                </template> -->
+              <!-- 匿名插槽是二级菜单  具名插槽是一级菜单
            <el-menu-item index="/home/picture">图文数据</el-menu-item>
            <el-menu-item index="/home/fansinfo">粉丝概况</el-menu-item>
            <el-menu-item index="/home/fansphoto">粉丝画像</el-menu-item>
-           <el-menu-item index="/home/fanslist">粉丝列表</el-menu-item>
-          </el-submenu>
+           <el-menu-item index="/home/fanslist">粉丝列表</el-menu-item> -->
+          <!-- </el-submenu> -->
           <!-- 一级导航没有子菜单 -->
-          <el-menu-item>
+          <el-menu-item index='/home/account'>
               <i class="el-icon-delete"></i>
               <span>账户信息</span>
           </el-menu-item>
@@ -47,7 +49,13 @@
 
 <script>
 export default {
-
+  props: ['collapse'], // 接受父组件传出来的变量
+  data () {
+    return {
+      bigImg: require('../../assets/img/logo_admin.png'),
+      smallImg: require('../../assets/img/toutiao.png')
+    }
+  }
 }
 </script>
 
@@ -55,7 +63,7 @@ export default {
 .layout-aside{
     background-color: #2e2f32;
     height: 100vh;
-    width: 230px;
+    // width: 230px;
     .title{
         text-align: center;
         padding: 10px 0;

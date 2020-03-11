@@ -3,7 +3,10 @@
   <el-row class="layout-header" type="flex" align="middle">
       <!-- 加：是因为span后边跟的是number 不加：是字符串 -->
       <el-col :span="12" class="left">
-          <i class="el-icon-s-fold"></i>
+        <!-- 图标class是动态的 -->
+        <!-- class="{class名称:布尔值}" -->
+
+          <i  @click="collapse=!collapse" :class="{'el-icon-s-fold': !collapse, 'el-icon-s-unfold': collapse }"></i>
           <span>不忘初心继续前进</span>
       </el-col>
       <!-- 右侧 -->
@@ -30,10 +33,19 @@
 </template>
 
 <script>
+import eventBus from '@/utils/eventBus' // 公共领域监听
 export default {
   data () {
     return {
-      userInfo: {} // 定义一个空的个人信息
+      userInfo: {}, // 定义一个空的个人信息
+      collapse: false // 开始不是折叠的
+    }
+  },
+  watch: {
+    // 监听data中的数据变化
+    collapse () {
+      // 此时说明折叠状态改变了 通知左侧导航事件
+      eventBus.$emit('changeCollapse') // 触发一个改变折叠状态的事件
     }
   },
   methods: {
@@ -51,20 +63,34 @@ export default {
         window.localStorage.removeItem('user-token')
         this.$router.push('/login')// 编程式导航
       }
+    },
+    getUserInfo () {
+      this.$axios({
+        url: '/user/profile' // 请求地址
+      }).then(result => {
+      // 如果加载成功了 我们要将数据赋值给 userInfo
+        this.userInfo = result.data
+      })
     }
   },
   //   Vue实例化后立即触发钩子函数
   created () {
-    // const token = localStorage.getItem('user-token') // 从本地取出钥匙
-    // 获取个人信息
-    this.$axios({
-      url: '/user/profile' // 获取个人信息接口
-      // headers: {
-      //   Authorization: `Bearer ${token}` // 格式要求 Bearer +token
-      // }// 请求头参数 headers放置请求头参数
-    }).then(result => {
-      // 加载成功了将数据赋值给userInfo
-      this.userInfo = result.data
+    // // const token = localStorage.getItem('user-token') // 从本地取出钥匙
+    // // 获取个人信息
+    // this.$axios({
+    //   url: '/user/profile' // 获取个人信息接口
+    //   // headers: {
+    //   //   Authorization: `Bearer ${token}` // 格式要求 Bearer +token
+    //   // }// 请求头参数 headers放置请求头参数
+    // }).then(result => {
+    //   // 加载成功了将数据赋值给userInfo
+    //   this.userInfo = result.data
+    // })
+    this.getUserInfo() // 这是正常加载
+    eventBus.$on('updateUser', () => {
+      // 如果有人触发了 updateUser事件 就会进入到该函数
+      // 重新获取下信息即可
+      this.getUserInfo()
     })
   }
 }

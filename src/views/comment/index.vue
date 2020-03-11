@@ -70,9 +70,9 @@ export default {
       // 重新拉取数据
       this.getComment()
     },
-    getComment () {
+    async getComment () {
       this.loading = true // 打开遮罩层
-      this.$axios({
+      const result = await this.$axios({
         // 接口如果不传分页数据默认就是第一页数据
         url: '/articles', // 请求地址
         params: {
@@ -84,14 +84,13 @@ export default {
         parmas传get参数也就是query参数
         data 传body参数也就是请求体参数
         */
-      }).then(result => {
-        console.log(result)
-        // 将返回结果中的数组复制个list空数组
-        this.list = result.data.results
-        // 将返回结果中的总数赋值给total
-        this.page.total = result.data.total_count
-        this.loading = false // 请求完毕关闭遮罩层
       })
+
+      // 将返回结果中的数组复制个list空数组
+      this.list = result.data.results
+      // 将返回结果中的总数赋值给total
+      this.page.total = result.data.total_count
+      this.loading = false // 请求完毕关闭遮罩层
     },
     formatterBool (row, column, cellValue, index) {
       // 定义一个格式化函数
@@ -107,31 +106,32 @@ export default {
     oppenOrClose (row) {
       // 如果状态是正常那么就显示关闭评论 如果状态是关闭就显示关闭评论
       const mess = row.comment_status ? '关闭' : '打开'
-      this.$confirm(`是否${mess}评论`, '提示').then(() => {
-        // 调用打卡或者关闭接口
-        this.$axios({
-          url: '/comments/status', // 请求地址
-          method: 'put', // 方式
-          // query参数
-          params: {
+      this.$confirm(`是否${mess}评论`, '提示').then(async () => {
+        try {
+          // 调用打卡或者关闭接口
+          await this.$axios({
+            url: '/comments/status', // 请求地址
+            method: 'put', // 方式
+            // query参数
+            params: {
             // // 为什么评论会失败 就是因为 原来 给你传了 9152 你回传了 9200
             // 所以我们用大数字包 保证 9152不被转化 就可以使用原来的功能
             //  // 前端传字符串到后端 只要和原数字一致  后端会自动将字符串转成大数字
             // 只需要保证 id 和传过来的id一致就行
-            article_id: row.id.toString()// 要求参数的文章id  将大数字BIGnumber转成字符串
-          },
-          data: {
+              article_id: row.id.toString()// 要求参数的文章id  将大数字BIGnumber转成字符串
+            },
+            data: {
             // body参数
-            allow_comment: !row.comment_status // 是打开还是关闭  此状态和评论状态相反
-          }
-        }).then(() => {
+              allow_comment: !row.comment_status // 是打开还是关闭  此状态和评论状态相反
+            }
+          })
           // 成功了 重新拉去数据
           this.$message.success(`${mess}评论成功`)
           this.getComment()
-        }).catch(() => {
+        } catch (error) {
           // 失败进入catch
           this.$message.error(`${mess}评论失败`)
-        })
+        }
       })
     }
   },
